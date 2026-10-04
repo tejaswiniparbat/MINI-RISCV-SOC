@@ -49,4 +49,9 @@ module alu_tb;
         $finish;
     end
 
+    initial begin
+        $dumpfile("waves/alu_tb.vcd");
+        $dumpvars(0, alu_tb);
+    end
+
 endmodule

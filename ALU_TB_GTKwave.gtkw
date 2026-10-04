@@ -1,0 +1,28 @@
+[*]
+[*] GTKWave Analyzer v3.3.127 (w)1999-2026 BSI
+[*] Sun Oct  4 12:47:10 2026
+[*]
+[dumpfile] "C:\MINI-RISKV-SOC\waves\alu_tb.vcd"
+[dumpfile_mtime] "Sun Oct  4 12:37:08 2026"
+[dumpfile_size] 2585
+[savefile] "C:\MINI-RISKV-SOC\ALU_TB_GTKwave.gtkw"
+[timestart] 0
+[size] 1920 973
+[pos] -219 -216
+*0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] alu_tb.
+[sst_width] 280
+[signals_width] 150
+[sst_expanded] 1
+[sst_vpaned_height] 286
+@22
+alu_tb.a[31:0]
+alu_tb.alu_op[3:0]
+alu_tb.b[31:0]
+alu_tb.errors[31:0]
+alu_tb.result[31:0]
+alu_tb.tests[31:0]
+@28
+alu_tb.zero
+[pattern_trace] 1
+[pattern_trace] 0
