@@ -10,7 +10,7 @@ module core_tb;
     logic [31:0] pc;
     int errors = 0, tests = 0;
 
-    core #(.IMEM_DEPTH(64), .DMEM_DEPTH(128)) dut (.clk(clk), .rst(rst), .pc_out(pc));
+    core #(.IMEM_DEPTH(64), .DMEM_DEPTH(128)) dut (.clk(clk), .rst(rst), .pc_out(pc), .io_we(), .io_addr(), .io_wdata(), .io_rdata(32'd0));
 
     always #5 clk = ~clk;
 

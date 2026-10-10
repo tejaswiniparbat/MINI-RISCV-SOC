@@ -1,22 +1,29 @@
 `timescale 1ns/1ps
 
 // Single-cycle RV32I core: PC -> imem -> decoder/regfile/imm_gen -> ALU -> dmem -> writeback
+// Loads/stores to addresses 0x1xxx_xxxx go out of the core on the io_* port (peripherals);
+// everything else goes to the internal data RAM.
 module core #(
     parameter int    IMEM_DEPTH = 1024,     // words
     parameter int    DMEM_DEPTH = 1024,     // words
-    parameter string INIT_FILE  = ""        // hex program for imem
+    parameter string INIT_FILE  = ""        // hex program for imem and dmem
 ) (
     input  logic        clk,
     input  logic        rst,
-    output logic [31:0] pc_out
+    output logic [31:0] pc_out,
+    // peripheral bus
+    output logic        io_we,
+    output logic [31:0] io_addr,
+    output logic [31:0] io_wdata,
+    input  logic [31:0] io_rdata
 );
 
     logic [31:0] pc, pc_plus4, next_pc, instr, imm;
     logic        reg_write, mem_read, mem_write, branch, jal, jalr, b_imm, illegal;
     logic [1:0]  a_sel, wb_sel;
     logic [3:0]  alu_op;
-    logic [31:0] rs1_val, rs2_val, alu_a, alu_b, alu_result, mem_rdata, wb_data;
-    logic        alu_zero, br_taken;
+    logic [31:0] rs1_val, rs2_val, alu_a, alu_b, alu_result, dmem_rdata, mem_rdata, wb_data;
+    logic        alu_zero, br_taken, is_io;
 
     assign pc_plus4 = pc + 32'd4;
     assign pc_out   = pc;
@@ -62,15 +69,23 @@ module core #(
         .branch(branch), .taken(br_taken)
     );
 
-    // ---------------- memory ----------------
+    // ---------------- memory / peripherals ----------------
+    assign is_io    = (alu_result[31:28] == 4'h1);
+
+    assign io_we    = mem_write & ~rst & is_io;
+    assign io_addr  = alu_result;
+    assign io_wdata = rs2_val;
+
     dmem #(.DEPTH(DMEM_DEPTH), .INIT_FILE(INIT_FILE)) u_dmem (
         .clk(clk),
-        .we (mem_write & ~rst),
+        .we (mem_write & ~rst & ~is_io),
         .addr(alu_result),
         .funct3(instr[14:12]),
         .wdata(rs2_val),
-        .rdata(mem_rdata)
+        .rdata(dmem_rdata)
     );
+
+    assign mem_rdata = is_io ? io_rdata : dmem_rdata;
 
     // ---------------- writeback ----------------
     always_comb begin
