@@ -1,0 +1,46 @@
+`timescale 1ns/1ps
+
+module regfile_tb;
+
+    logic clk = 0, we = 0;
+    logic [4:0] rs1_addr = 0, rs2_addr = 0, rd_addr = 0;
+    logic [31:0] rd_data = 0, rs1_data, rs2_data;
+    int errors = 0, tests = 0;
+
+    regfile dut (.*);
+
+    always #5 clk = ~clk;
+
+    task automatic write(input logic [4:0] r, input logic [31:0] d);
+        @(negedge clk);
+        we = 1; rd_addr = r; rd_data = d;
+        @(negedge clk);
+        we = 0;
+    endtask
+
+    task automatic check(input logic [4:0] a, b, input logic [31:0] ea, eb, input string name);
+        rs1_addr = a; rs2_addr = b;
+        #1;
+        tests++;
+        if (rs1_data !== ea || rs2_data !== eb) begin
+            errors++;
+            $display("FAIL %-14s got=%h,%h expected=%h,%h", name, rs1_data, rs2_data, ea, eb);
+        end else
+            $display("PASS %-14s", name);
+    endtask
+
+    initial begin
+        write(5'd5,  32'h0000000A);
+        write(5'd6,  32'h0000000B);
+        check(5'd5, 5'd6, 32'hA, 32'hB, "read x5,x6");
+        write(5'd0,  32'hDEADBEEF);
+        check(5'd0, 5'd5, 32'h0, 32'hA, "x0 stays 0");
+        write(5'd31, 32'hCAFEBABE);
+        check(5'd31, 5'd31, 32'hCAFEBABE, 32'hCAFEBABE, "x31 both ports");
+
+        if (errors == 0) $display("ALL %0d TESTS PASSED", tests);
+        else             $display("%0d of %0d TESTS FAILED", errors, tests);
+        $finish;
+    end
+
+endmodule

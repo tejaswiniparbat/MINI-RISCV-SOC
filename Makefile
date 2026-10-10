@@ -1,13 +1,11 @@
+.RECIPEPREFIX = >
 TOP ?= alu_tb
-RTL := $(wildcard rtl/*.sv)
-TB  := tb/$(TOP).sv
+SRC := $(wildcard rtl/*.sv)
 
-.PHONY: sim clean
 sim:
-	rm -rf obj_dir
-	verilator --cc --exe --trace --timing --main --top-module $(TOP) $(RTL) $(TB)
-	make -C obj_dir -f V$(TOP).mk CXX=g++ LINK=g++ OPT_GLOBAL=-O2
-	./obj_dir/V$(TOP).exe
+> rm -rf obj_dir
+> verilator --binary --timing -Wno-fatal --top-module $(TOP) $(SRC) tb/$(TOP).sv
+> ./obj_dir/V$(TOP)
 
 clean:
-	rm -rf obj_dir
+> rm -rf obj_dir
