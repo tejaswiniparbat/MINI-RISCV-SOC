@@ -1,3 +1,6 @@
 obj_dir/
 waves/
 *.bak
+firmware/*.elf
+firmware/*.bin
+firmware/*.lst

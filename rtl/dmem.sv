@@ -5,7 +5,8 @@
 //   000 LB/SB   001 LH/SH   010 LW/SW   100 LBU   101 LHU
 // Accesses are assumed naturally aligned.
 module dmem #(
-    parameter int DEPTH = 1024              // words
+    parameter int    DEPTH     = 1024,      // words
+    parameter string INIT_FILE = ""         // optional hex image (globals/constants)
 ) (
     input  logic        clk,
     input  logic        we,
@@ -26,6 +27,7 @@ module dmem #(
 
     initial begin
         for (int i = 0; i < DEPTH; i++) mem[i] = 32'd0;
+        if (INIT_FILE != "") $readmemh(INIT_FILE, mem);
     end
 
     assign widx = addr[AW+1:2];

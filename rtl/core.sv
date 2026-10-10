@@ -63,7 +63,7 @@ module core #(
     );
 
     // ---------------- memory ----------------
-    dmem #(.DEPTH(DMEM_DEPTH)) u_dmem (
+    dmem #(.DEPTH(DMEM_DEPTH), .INIT_FILE(INIT_FILE)) u_dmem (
         .clk(clk),
         .we (mem_write & ~rst),
         .addr(alu_result),
