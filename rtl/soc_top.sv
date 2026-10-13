@@ -3,20 +3,24 @@
 // SoC top level: core + peripherals.  This is what goes on the FPGA.
 // Peripheral address map (core sends 0x1xxx_xxxx here):
 //   0x1000_0000 - 0x1000_00FF   GPIO
+//   0x1000_0100 - 0x1000_01FF   UART
 module soc_top #(
-    parameter string INIT_FILE = "firmware/gpio_demo.hex"
+    parameter string INIT_FILE = "firmware/gpio_demo.hex",
+    parameter int    CLK_HZ    = 50_000_000,     // set to your board's clock
+    parameter int    BAUD      = 115_200
 ) (
     input  logic        clk,
     input  logic        rst,
     input  logic [15:0] gpio_in,
-    output logic [15:0] gpio_out
+    output logic [15:0] gpio_out,
+    output logic        uart_tx
 );
 
     logic        io_we;
     logic [31:0] io_addr, io_wdata, io_rdata;
-    logic [31:0] gpio_rdata;
+    logic [31:0] gpio_rdata, uart_rdata;
     logic [31:0] pc_unused;
-    logic        gpio_sel;
+    logic        gpio_sel, uart_sel;
 
     core #(.INIT_FILE(INIT_FILE)) u_core (
         .clk(clk), .rst(rst), .pc_out(pc_unused),
@@ -24,6 +28,7 @@ module soc_top #(
     );
 
     assign gpio_sel = (io_addr[15:8] == 8'h00);
+    assign uart_sel = (io_addr[15:8] == 8'h01);
 
     gpio #(.W(16)) u_gpio (
         .clk(clk), .rst(rst),
@@ -31,6 +36,16 @@ module soc_top #(
         .pins_in(gpio_in), .pins_out(gpio_out)
     );
 
-    assign io_rdata = gpio_sel ? gpio_rdata : 32'd0;
+    uart #(.CLK_HZ(CLK_HZ), .BAUD(BAUD)) u_uart (
+        .clk(clk), .rst(rst),
+        .we(io_we & uart_sel), .addr(io_addr), .wdata(io_wdata), .rdata(uart_rdata),
+        .tx(uart_tx)
+    );
+
+    always_comb begin
+        if      (gpio_sel) io_rdata = gpio_rdata;
+        else if (uart_sel) io_rdata = uart_rdata;
+        else               io_rdata = 32'd0;
+    end
 
 endmodule
