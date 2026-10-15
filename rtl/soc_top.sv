@@ -13,10 +13,11 @@ module soc_top #(
     input  logic        rst,
     input  logic [15:0] gpio_in,
     output logic [15:0] gpio_out,
-    output logic        uart_tx
+    output logic        uart_tx,
+    input  logic        uart_rx
 );
 
-    logic        io_we;
+    logic        io_we, io_re;
     logic [31:0] io_addr, io_wdata, io_rdata;
     logic [31:0] gpio_rdata, uart_rdata;
     logic [31:0] pc_unused;
@@ -24,7 +25,7 @@ module soc_top #(
 
     core #(.INIT_FILE(INIT_FILE)) u_core (
         .clk(clk), .rst(rst), .pc_out(pc_unused),
-        .io_we(io_we), .io_addr(io_addr), .io_wdata(io_wdata), .io_rdata(io_rdata)
+        .io_we(io_we), .io_re(io_re), .io_addr(io_addr), .io_wdata(io_wdata), .io_rdata(io_rdata)
     );
 
     assign gpio_sel = (io_addr[15:8] == 8'h00);
@@ -38,8 +39,9 @@ module soc_top #(
 
     uart #(.CLK_HZ(CLK_HZ), .BAUD(BAUD)) u_uart (
         .clk(clk), .rst(rst),
-        .we(io_we & uart_sel), .addr(io_addr), .wdata(io_wdata), .rdata(uart_rdata),
-        .tx(uart_tx)
+        .we(io_we & uart_sel), .re(io_re & uart_sel),
+        .addr(io_addr), .wdata(io_wdata), .rdata(uart_rdata),
+        .tx(uart_tx), .rx(uart_rx)
     );
 
     always_comb begin

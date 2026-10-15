@@ -10,7 +10,7 @@ module core_fw_tb;
     int errors = 0, tests = 0;
 
     core #(.IMEM_DEPTH(1024), .DMEM_DEPTH(1024), .INIT_FILE("firmware/fib.hex"))
-        dut (.clk(clk), .rst(rst), .pc_out(pc), .io_we(), .io_addr(), .io_wdata(), .io_rdata(32'd0));
+        dut (.clk(clk), .rst(rst), .pc_out(pc), .io_we(), .io_re(), .io_addr(), .io_wdata(), .io_rdata(32'd0));
 
     always #5 clk = ~clk;
 

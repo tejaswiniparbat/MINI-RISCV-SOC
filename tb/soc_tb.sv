@@ -13,7 +13,7 @@ module soc_tb;
     int errors = 0, tests = 0;
 
     soc_top #(.INIT_FILE("firmware/gpio_demo.hex"))
-        dut (.clk(clk), .rst(rst), .gpio_in(gpio_in), .gpio_out(gpio_out), .uart_tx());
+        dut (.clk(clk), .rst(rst), .gpio_in(gpio_in), .gpio_out(gpio_out), .uart_tx(), .uart_rx(1'b1));
 
     always #5 clk = ~clk;
 

@@ -13,6 +13,7 @@ module core #(
     output logic [31:0] pc_out,
     // peripheral bus
     output logic        io_we,
+    output logic        io_re,
     output logic [31:0] io_addr,
     output logic [31:0] io_wdata,
     input  logic [31:0] io_rdata
@@ -73,6 +74,7 @@ module core #(
     assign is_io    = (alu_result[31:28] == 4'h1);
 
     assign io_we    = mem_write & ~rst & is_io;
+    assign io_re    = mem_read & ~rst & is_io;
     assign io_addr  = alu_result;
     assign io_wdata = rs2_val;
 
