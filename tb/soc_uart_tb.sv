@@ -15,7 +15,7 @@ module soc_uart_tb;
     int errors = 0, tests = 0;
 
     soc_top #(.INIT_FILE("firmware/uart_demo.hex"), .CLK_HZ(1000), .BAUD(100)) dut (
-        .clk(clk), .rst(rst), .gpio_in(16'h0000), .gpio_out(gpio_out), .uart_tx(uart_tx), .uart_rx(1'b1), .spi_sclk(), .spi_mosi(), .spi_miso(1'b0), .spi_cs_n()
+        .clk(clk), .rst(rst), .gpio_in(16'h0000), .gpio_out(gpio_out), .uart_tx(uart_tx), .uart_rx(1'b1), .spi_sclk(), .spi_mosi(), .spi_miso(1'b0), .spi_cs_n(), .i2c_scl_o(), .i2c_sda_o(), .i2c_sda_i(1'b1)
     );
 
     always #5 clk = ~clk;

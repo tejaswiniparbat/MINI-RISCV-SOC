@@ -1,6 +1,6 @@
 TOP ?= alu_tb
 RTL := $(wildcard rtl/*.sv)
-TB  := tb/$(TOP).sv
+TB  := tb/$(TOP).sv $(wildcard tb/models/*.sv)
 
 .PHONY: sim clean
 sim:

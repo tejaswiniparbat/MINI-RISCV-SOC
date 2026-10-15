@@ -18,7 +18,7 @@ module soc_echo_tb;
 
     soc_top #(.INIT_FILE("firmware/uart_echo.hex"), .CLK_HZ(1000), .BAUD(100)) dut (
         .clk(clk), .rst(rst), .gpio_in(16'h0000), .gpio_out(gpio_out),
-        .uart_tx(uart_tx), .uart_rx(uart_rx), .spi_sclk(), .spi_mosi(), .spi_miso(1'b0), .spi_cs_n()
+        .uart_tx(uart_tx), .uart_rx(uart_rx), .spi_sclk(), .spi_mosi(), .spi_miso(1'b0), .spi_cs_n(), .i2c_scl_o(), .i2c_sda_o(), .i2c_sda_i(1'b1)
     );
 
     always #5 clk = ~clk;

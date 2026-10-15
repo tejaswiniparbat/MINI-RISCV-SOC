@@ -11,6 +11,17 @@
 #define SPI_STATUS   (*(volatile unsigned int *)0x10000204)   // b0 busy
 #define SPI_CS       (*(volatile unsigned int *)0x10000208)   // b0 = CS_N level (1 = deselected)
 #define SPI_DIV      (*(volatile unsigned int *)0x1000020C)   // SCLK = CLK / (2*(DIV+1))
+#define I2C_DATA     (*(volatile unsigned int *)0x10000300)   // write = byte to send, read = last byte received
+#define I2C_STATUS   (*(volatile unsigned int *)0x10000304)   // b0 busy, b1 NACK
+#define I2C_CMD      (*(volatile unsigned int *)0x10000308)   // write = run a command
+#define I2C_DIV      (*(volatile unsigned int *)0x1000030C)   // SCL = CLK / (4*(DIV+1))
+
+// I2C command bits
+#define I2C_START    1u
+#define I2C_STOP     2u
+#define I2C_WRITE    4u
+#define I2C_READ     8u
+#define I2C_NACK     16u
 
 static inline void uart_putc(char c)
 {
@@ -49,6 +60,30 @@ static inline unsigned char spi_xfer(unsigned char b)
     SPI_DATA = b;
     while (SPI_STATUS & 1u) { }
     return (unsigned char)(SPI_DATA & 0xFFu);
+}
+
+static inline void i2c_wait(void)
+{
+    while (I2C_STATUS & 1u) { }
+}
+
+// Send one byte; flags may add I2C_START and/or I2C_STOP.  Returns 0 if ACKed, 1 if NACKed.
+static inline int i2c_write(unsigned char b, unsigned int flags)
+{
+    i2c_wait();
+    I2C_DATA = b;
+    I2C_CMD  = I2C_WRITE | flags;
+    i2c_wait();
+    return (I2C_STATUS & 2u) ? 1 : 0;
+}
+
+// Receive one byte; flags: I2C_NACK (after the last byte) and/or I2C_STOP.
+static inline unsigned char i2c_read(unsigned int flags)
+{
+    i2c_wait();
+    I2C_CMD = I2C_READ | flags;
+    i2c_wait();
+    return (unsigned char)(I2C_DATA & 0xFFu);
 }
 
 #endif
