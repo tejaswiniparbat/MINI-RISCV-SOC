@@ -7,6 +7,10 @@
 #define UART_TX      (*(volatile unsigned int *)0x10000100)
 #define UART_STATUS  (*(volatile unsigned int *)0x10000104)   // b0 TX ready, b1 RX avail, b2 overrun
 #define UART_RX      (*(volatile unsigned int *)0x10000108)   // reading pops the byte
+#define SPI_DATA     (*(volatile unsigned int *)0x10000200)   // write = start transfer, read = last RX byte
+#define SPI_STATUS   (*(volatile unsigned int *)0x10000204)   // b0 busy
+#define SPI_CS       (*(volatile unsigned int *)0x10000208)   // b0 = CS_N level (1 = deselected)
+#define SPI_DIV      (*(volatile unsigned int *)0x1000020C)   // SCLK = CLK / (2*(DIV+1))
 
 static inline void uart_putc(char c)
 {
@@ -36,6 +40,15 @@ static inline char uart_getc(void)           // blocks until a byte arrives
 {
     while (!uart_rx_ready()) { }
     return (char)(UART_RX & 0xFFu);
+}
+
+// Full-duplex SPI transfer of one byte (mode 0): sends b, returns the byte received
+static inline unsigned char spi_xfer(unsigned char b)
+{
+    while (SPI_STATUS & 1u) { }
+    SPI_DATA = b;
+    while (SPI_STATUS & 1u) { }
+    return (unsigned char)(SPI_DATA & 0xFFu);
 }
 
 #endif
