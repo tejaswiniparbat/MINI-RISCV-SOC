@@ -4,3 +4,7 @@ waves/
 firmware/*.elf
 firmware/*.bin
 firmware/*.lst
+vivado/out/
+vivado/.Xil/
+*.jou
+*.log
