@@ -176,3 +176,16 @@ Run on hardware, interrupts and timers, M extension (multiply/divide), a pipelin
 instruction being executed; the bottom row is the UART TX pin (one character = start bit, 8 data bits, stop bit).
 
 ![SoC waveform](docs/soc_uart_waveform.png)
+
+## Waveforms: C code running on the SoC
+
+`firmware/uart_demo.c` printing "Hello, RISC-V!" through the UART (simulation, GTKWave).
+
+**CPU view:** the program counter steps through the instructions the compiler produced. The three-instruction
+loop at 0x30-0x38 is `while ((UART_STATUS & 1) == 0)` in `uart_putc`: the CPU waits for the UART to finish.
+
+![CPU waveform](docs/soc_cpu_waveform.png)
+
+**UART view:** one transmitted character is a start bit (0), 8 data bits (least significant first) and a stop bit (1).
+
+![UART waveform](docs/soc_uart_waveform.png)
