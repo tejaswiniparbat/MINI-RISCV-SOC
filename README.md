@@ -169,3 +169,10 @@ characters in upper case.
 ## Possible next steps
 
 Run on hardware, interrupts and timers, M extension (multiply/divide), a pipelined core, DMA.
+
+## Waveform: C code running on the SoC
+
+`firmware/uart_demo.c` printing "Hello, RISC-V!" through the UART. The top rows show the program counter and the
+instruction being executed; the bottom row is the UART TX pin (one character = start bit, 8 data bits, stop bit).
+
+![SoC waveform](docs/soc_uart_waveform.png)
