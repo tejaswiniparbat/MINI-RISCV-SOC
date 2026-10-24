@@ -5,7 +5,7 @@
 A small **32-bit RISC-V (RV32I) system-on-chip** written in SystemVerilog: a single-cycle CPU core,
 memory-mapped **GPIO, UART, SPI and I²C** peripherals of my own design, and **C firmware** that runs on the core.
 
-Everything is verified with self-checking Verilator testbenches (**248 checks in 19 testbenches**), including
+Everything is verified with self-checking Verilator testbenches (**253 checks in 20 testbenches**), including
 full-system tests where compiled C code talks to behavioural SPI and I²C slaves and decodes the UART output.
 FPGA build files for the Digilent Basys 3 are included but **have not been run on hardware yet**.
 
@@ -127,7 +127,7 @@ To rebuild a program you need `riscv64-unknown-elf-gcc` (MSYS2 package `mingw-w6
 sh firmware/build.sh uart_demo     # firmware/uart_demo.c -> firmware/uart_demo.hex
 ```
 
-Programs: `fib` (Fibonacci), `gpio_demo`, `uart_demo`, `uart_echo`, `spi_demo`, `i2c_demo`, `board_demo`.
+Programs: `fib` (Fibonacci), `gpio_demo`, `uart_demo`, `uart_echo`, `spi_demo`, `i2c_demo`, `board_demo`, `monitor`.
 They are compiled for `rv32i` with no standard library. `firmware/mmio.h` holds the register addresses and the
 small drivers (`uart_putc`, `spi_xfer`, `i2c_write`, ...).
 
@@ -155,6 +155,7 @@ characters in upper case.
 | spi_tb / soc_spi_tb | 16 / 11 | SPI engine, C firmware against an SPI slave |
 | i2c_tb / soc_i2c_tb | 22 / 14 | I²C engine, C firmware against an I²C slave |
 | fpga_top_tb | 5 | whole board: reset, clock divider, LEDs, UART |
+| soc_monitor_tb | 5 | UART monitor program: typed commands, echo, backspace, memory and LED access |
 
 ## Design notes and limitations
 

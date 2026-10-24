@@ -2,7 +2,7 @@
 # Run every testbench and print one result line per test.   Usage: sh run_all_tests.sh
 # Takes several minutes (each test rebuilds the simulator).
 TESTS="alu_tb regfile_tb imm_gen_tb decoder_tb imem_tb dmem_tb branch_unit_tb core_tb core_fw_tb \
-gpio_tb soc_tb uart_tb soc_uart_tb soc_echo_tb spi_tb soc_spi_tb i2c_tb soc_i2c_tb fpga_top_tb"
+gpio_tb soc_tb uart_tb soc_uart_tb soc_echo_tb spi_tb soc_spi_tb i2c_tb soc_i2c_tb fpga_top_tb soc_monitor_tb"
 
 pass=0; fail=0; skip=0
 for t in $TESTS; do
