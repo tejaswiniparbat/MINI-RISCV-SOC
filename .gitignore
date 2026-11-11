@@ -8,3 +8,5 @@ vivado/out/
 vivado/.Xil/
 *.jou
 *.log
+build/
+tools/
