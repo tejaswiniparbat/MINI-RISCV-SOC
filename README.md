@@ -7,7 +7,7 @@ memory-mapped **GPIO, UART, SPI and I²C** peripherals of my own design, and **C
 
 Everything is verified with self-checking Verilator testbenches (**253 checks in 20 testbenches**), including
 full-system tests where compiled C code talks to behavioural SPI and I²C slaves and decodes the UART output.
-FPGA build files for the Digilent Basys 3 are included but **have not been run on hardware yet**.
+FPGA build files are included but **have not been run on hardware yet**. The target board is a Spartan-6, which needs Xilinx ISE 14.7; the Vivado/Basys 3 files are a reference for 7-series boards.
 
 ## Status
 
@@ -160,7 +160,7 @@ characters in upper case.
 ## Design notes and limitations
 
 - RV32I only: no M/A/C extensions, no CSRs, no interrupts, no `ECALL`/`EBREAK`/`FENCE` (they decode as illegal).
-- Single-cycle design: simple and easy to debug, but the clock must be slow (25 MHz planned on the Basys 3).
+- Single-cycle design: simple and easy to debug, but the clock must be slow (the CPU clock is divided down from the board clock).
 - Separate instruction and data memories, 4 KB each, both initialised from the same image. Only naturally aligned accesses are supported.
 - UART: 8N1 only, one-byte receive buffer with an overrun flag.
 - SPI: mode 0 and 8-bit transfers only; chip select is controlled by software.
@@ -170,13 +170,6 @@ characters in upper case.
 ## Possible next steps
 
 Run on hardware, interrupts and timers, M extension (multiply/divide), a pipelined core, DMA.
-
-## Waveform: C code running on the SoC
-
-`firmware/uart_demo.c` printing "Hello, RISC-V!" through the UART. The top rows show the program counter and the
-instruction being executed; the bottom row is the UART TX pin (one character = start bit, 8 data bits, stop bit).
-
-![SoC waveform](docs/soc_uart_waveform.png)
 
 ## Waveforms: C code running on the SoC
 
